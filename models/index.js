@@ -5,7 +5,7 @@ const Tag = require('./Tag');
 const ProductTag = require('./ProductTag');
 
 // Products belongsTo Category
-Product.belongsto(category, {
+Product.belongsTo(Category, {
   foriegnKey: "category_id",
 })
 // Categories have many Products
