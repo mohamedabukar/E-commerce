@@ -12,55 +12,72 @@ router.get('/', (req, res) => {
       attributes: ['product_name', 'price', 'stock', 'category_id']
     }
   })
-  .then(data => res.json(data))
-  .catch(err => console.log(err))
+    .then(data => res.json(data))
+    .catch(err => console.log(err))
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   // find a single tag by its `id`
   // be sure to include its associated Product data
-  Tag.findOne({
-    where: {
-      id: req.params.id
-    },
-    include: {
-      model: Product,
-      attributes: ['product_name', 'price', 'stock', 'category_id']
+  try {
+    const tagData = await Tag.findByPk({
+      where: {
+        id: req.params.id
+      },
+      include: {
+        model: Product,
+        attributes: ['product_name', 'price', 'stock', 'category_id']
+      }
+    });
+    if (!tagData) {
+      res.status(404).json({ message: 'No tag with this id' })
     }
-  })
-  .then(data => res.json(data))
-  .catch(err => console.log(err))
-});
+    res.status(200).json(tagData);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+}
+);
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   // create a new tag
-  Tag.create({
-    tag_name: req.body.tag_name
-  })
-  .then(data => res.json(data))
-  .catch(err => console.log(err))
+  try {
+    const tagData = await Tag.create({
+      tag_name: req.body.tag_name
+    })
+    res.status(200).json(tagData);
+  } catch (err) {
+    res.status(500).json(tagData);
+  }
 });
 
 router.put('/:id', (req, res) => {
   // update a tag's name by its `id` value
-  Tag.update(req.body, {
+  try{
+  const tagData = await Tag.update(req.body, {
     where: {
       id: req.params.id
     }
   })
-  .then(data => res.json(data))
-  .catch(err => console.log(err))
+  res.status(200).json(tagData);
+} catch(err){
+  res.status(500).json(err);
+}
+    
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   // delete on tag by its `id` value
-  Tag.destroy({
+  try{
+  const tagData = await Tag.destroy({
     where: {
       id: req.params.id
     }
   })
-  .then(data => console.log(data))
-  .catch(err => console.log(err))
+  res.status(200).json(tagData);
+} catch (err){
+  res.status(500).json()
+}
 });
 
 module.exports = router;
